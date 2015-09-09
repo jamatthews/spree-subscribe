@@ -1,1 +1,1 @@
-//= require intervals_autocomplete
+//= require ./intervals_autocomplete

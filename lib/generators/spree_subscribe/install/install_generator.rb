@@ -3,7 +3,7 @@ module SpreeSubscribe
     class InstallGenerator < Rails::Generators::Base
 
       def add_javascripts
-        append_file 'vendor/assets/javascripts/spree/frontend/all.js', "//= require frontend/spree_subscribe\n"
+        append_file 'vendor/assets/javascripts/spree/frontend/all.js', "//= require spree/frontend/spree_subscribe\n"
         append_file 'vendor/assets/javascripts/spree/backend/all.js', "//= require spree/backend/spree_subscribe\n"
       end
 
