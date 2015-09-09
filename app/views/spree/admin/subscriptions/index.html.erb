@@ -15,19 +15,20 @@
 <% unless @subscriptions.empty? %>
   <table class="index responsive" id="listing_orders" data-hook width="100%">
     <colgroup>
-       <col style="width: 16%;">
-       <col style="width: 13%;">
        <col style="width: 14%;">
        <col style="width: 14%;">
-       <col style="width: 14%;">
-       <col style="width: 17%;">
+       <col style="width: 11%;">
        <col style="width: 12%;">
+       <col style="width: 12%;">
+       <col style="width: 12%;">
+       <col style="width: 15%;">
+       <col style="width: 10%;">
     </colgroup>
     <thead>
         <tr>
-          <th class="subscription-product"><%= t(:product, :scope => :subscribe) %></th>
+          <th class="subscription-id"><%= t(:subscription, :scope => :subscribe, count: 1) %></th>
           <th class="subscription-user"><%= t(:user, :scope => :subscribe) %></th>
-          <th class="subscription-price"><%= t(:price, :scope => :subscribe) %></th>
+          <th class="subscription-price"><%= t(:subtotal, scope: :spree) %></th>
           <th class="subscription-interval"><%= t(:interval, :scope => :subscribe) %></th>
           <th class="subscription-reorder-date"><%= t(:reorder_on, :scope => :subscribe) %></th>
           <th class="subscription-status"><%= t(:state, :scope => :subscribe) %></th>
@@ -37,12 +38,10 @@
     <tbody>
     <% @subscriptions.each do |sub| %>
       <tr data-hook="admin_subscriptions_index_rows" class="state-<%= sub.state.downcase %> <%= cycle('odd', 'even') %>">
-        <td class="subscription-product">
-          <span class="product-name"><%= sub.line_item.variant.name %></span><br/>
-          <%= sub.line_item.variant.options_text %>
-        </td>
-        <td class="subscription-user"><%= sub.user.id %></td>
-        <td class="subscription-price"><%= money sub.line_item.price %></td>
+        <td class="subscription-id"><%= link_to sub.id, edit_admin_subscription_path(sub) %></td>
+        <% upath =  sub.user ? admin_user_path(sub.user) : "#" %>
+        <td class="subscription-user"><%= link_to sub.order.try(:email), upath %></td>
+        <td class="subscription-price"><%= subscription_price(sub) %></td>
         <td class="subscription-interval"><%= sub.time_title %></td>
         <td class="subscription-reorder-date">
           <% if sub.active? %>

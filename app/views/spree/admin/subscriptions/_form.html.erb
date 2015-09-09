@@ -1,3 +1,27 @@
+<table class="index responsive">
+  <thead>
+    <th><%= t(:product, scope: :subscribe) %></th>
+    <th><%= t(:quantity, sope: :spree) %> </th>
+    <th><%= t(:price, scope: :subscribe) %></th>
+  </thead>
+  <tbody>
+    <% @subscription.line_items.each do |line_item| %>
+      <tr>
+        <td>
+          <%= line_item.variant.name %>
+          <% unless line_item.variant.options_text.blank? %>
+            - <%= line_item.variant.options_text %>
+          <% end %>
+        </td>
+        <td><%= line_item.quantity %></td>
+        <td><%= line_item.display_amount.to_html %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+
 <div data-hook="admin_inside_subscriptions_form" class="field">
 
 <%= form_for @subscription, :url => admin_subscription_url(@subscription), :method => :put do |f| %>

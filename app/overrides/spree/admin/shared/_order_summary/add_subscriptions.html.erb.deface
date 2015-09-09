@@ -1,0 +1,5 @@
+<!-- insert_bottom "dl.additional-info" -->
+<% if @order.subscription %>
+  <dt><%= Spree.t(:subscription, scope: :subscribe, count: 1) %>:</dt>
+  <dd><%= link_to @order.subscription.id, admin_subscription_url(@order.subscription) %></dd>
+<% end %>

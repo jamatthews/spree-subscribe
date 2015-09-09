@@ -6,7 +6,18 @@
   </div>
   <div>
     <%= radio_button_tag "subscriptions[active]", 1 %> Deliver every
-    <%- options = @product.subscription_intervals.collect{|i| [i.name,i.id] } %>
-    <%= select_tag "subscriptions[interval_id]", options_for_select(options) %>
+    <% if @product.subscription_intervals.count > 1 %>
+      <%- options = @product.subscription_intervals.collect{|i| [i.name,i.id] } %>
+      <%= select_tag "subscriptions[interval_id]", options_for_select(options) %>
+    <% else %>
+      <%- # render just the name of the subscription we want %>
+      <% interval = @product.subscription_intervals.first %>
+      <%= interval.name %>.
+      <%= hidden_field_tag "subscriptions[interval_id]", interval.id %>
+    <% end %>
+    <% if @product.subscribed_price || @product.try(:wholesale_subscription_price) %>
+      <% price_difference = subscription_price_difference_for product: @product %>
+      <span class="price-saved">You save <%= price_difference.to_html %>!</span>
+    <% end %>
   </div>
 <% end %>

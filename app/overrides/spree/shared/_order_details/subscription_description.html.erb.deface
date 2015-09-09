@@ -1,4 +1,9 @@
 <!-- insert_bottom "[data-hook='order_item_description']" -->
 <% if item.subscription %>
-  <div>Subscription: Reorder every <%= item.subscription.time_title %></div>
+  <div class="subscription-callout" style="font-weight: bold;">
+    Subscription: Deliver every <%= item.subscription.time_title %>.
+
+    <% price_difference = subscription_price_difference_for_line_item item %>
+    <span class="price-saved">You save <%= price_difference.to_html %>!</span>
+  </div>
 <% end %>

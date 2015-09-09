@@ -17,10 +17,16 @@
       <% spree_current_user.subscriptions.each do |sub| %>
         <tr class="<%= cycle('even', 'odd') %>">
           <td class="subscription-product">
-            <span class="product-name"><%= sub.line_item.variant.name %></span><br/>
-            <%= sub.line_item.variant.options_text %>
+            <% sub.line_items.each do |line_item| %>
+              <span class="product-name"><%= line_item.variant.name %></span>
+              <% unless line_item.variant.options_text.blank? %>
+                - <%= line_item.variant.options_text %>
+              <% end %>
+              x <%= line_item.quantity %>
+              <br/>
+            <% end %>
           </td>
-          <td class="subscription-price"><%= money sub.line_item.price %></td>
+          <td class="subscription-price"><%= subscription_price(sub).to_html %></td>
           <td class="subscription-interval"><%= sub.time_title %></td>
           <td class="subscription-reorder-date">
             <% if sub.active? %>

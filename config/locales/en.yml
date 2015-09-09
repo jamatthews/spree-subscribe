@@ -3,9 +3,15 @@
 
 en:
   subscribe:
+    subscription:
+      one: "Subscription"
+      other: "Subscriptions"
     users_show_title: "My Subscriptions"
-    no_subscriptions_available: "You do not have any subscriptions setup."
+    no_subscriptions_available: "You do not have any subscriptions set up."
     product: "Product"
+    products:
+      one: "Product"
+      other: "Products"
     user: "User"
     price: "Price"
     interval: "Delivers Every"

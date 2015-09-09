@@ -9,14 +9,12 @@
 
 <%= render "spree/admin/shared/orders_sub_menu" %>
 
-<% #= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Subscription Details' } %>
-
 <div data-hook="admin_subscription_edit_header">
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @subscription } %>
 </div>
 
 <div data-hook="admin_subscription_edit_form">
   <div id="order-form-wrapper">
-    <%= render :partial => 'form', :locals => { :order => @subscription } %>
+    <%= render :partial => 'form' %>
   </div>
 </div>

@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe Spree::Subscription do
+  context "validation" do
+    it "cannot make multiple subscriptions per orderXinterval"
+    it "has many line items"
+  end
+
 
   context "that is in 'cart' state" do
     before(:each) do
