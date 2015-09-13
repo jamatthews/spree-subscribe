@@ -97,7 +97,7 @@ class Spree::Subscription < Spree::Base
   def select_shipping
     # DD: shipments are created when order state goes to "delivery"
     puts " -> selecting shipping rate..."
-
+    self.new_order.create_proposed_shipments #JM: should this really be necessary? unconvinced
     shipment = self.new_order.shipments.first # DD: there should be only one shipment
     rate = shipment.shipping_rates.first{|r| r.shipping_method.id == self.shipping_method.id }
     raise "No rate was found. TODO: Implement logic to select the cheapest rate." unless rate

@@ -10,11 +10,11 @@ describe Spree::Subscription do
   context "that is in 'cart' state" do
     before(:each) do
       @sub = create(:subscription)
-      @sub.line_item.order.reload
+      @sub.order.reload
     end
 
     it "should have no reorder date" do
-      @sub.line_item.should be
+      @sub.line_items.first.should be
       @sub.state.should eq("cart")
       @sub.reorder_on.should be_nil
     end
@@ -25,24 +25,17 @@ describe Spree::Subscription do
     end
 
     it "should have a billing address on activation" do
-      @sub.line_item.order.bill_address.should be
+      @sub.order.bill_address.should be
       @sub.billing_address.should be_nil
       @sub.start
       @sub.billing_address.should be
     end
 
     it "should have a shipping address on activation" do
-      @sub.line_item.order.shipping_address.should be
+      @sub.order.shipping_address.should be
       @sub.shipping_address.should be_nil
       @sub.start
       @sub.shipping_address.should be
-    end
-
-    it "should have a ship method on activation" do
-      @sub.line_item.order.shipment_for_variant( @sub.line_item.variant ).should be
-      @sub.shipping_method.should be_nil
-      @sub.start
-      @sub.shipping_method.should be
     end
 
     it "should have a payment method on activation" do
@@ -67,7 +60,7 @@ describe Spree::Subscription do
   context "that is ready for reorder" do
     before(:each) do
       @sub = create(:subscription_for_reorder)
-      @sub.line_item.order.reload
+      @sub.order.reload
       # DD: calling start will set date into future
       @sub.start
       @sub.update_attribute(:reorder_on,Date.today)
@@ -100,14 +93,14 @@ describe Spree::Subscription do
 
     it "should have a valid line item" do
       @sub.create_reorder
-      @sub.add_subscribed_line_item.should be_true
+      @sub.add_subscribed_line_items.should be_true
       order = @sub.reorders.first
       order.line_items.count.should eq(1)
     end
 
     it "should have a valid order with a shipping method" do
       @sub.create_reorder
-      @sub.add_subscribed_line_item
+      @sub.add_subscribed_line_items
       @sub.select_shipping.should be_true
 
       order = @sub.reorders.first
@@ -119,7 +112,7 @@ describe Spree::Subscription do
 
     it "should have a valid order with a payment method" do
       @sub.create_reorder
-      @sub.add_subscribed_line_item
+      @sub.add_subscribed_line_items
       @sub.select_shipping
       @sub.add_payment.should be_true
 
@@ -132,7 +125,7 @@ describe Spree::Subscription do
 
     it "should have a valid order with a payment source" do
       @sub.create_reorder
-      @sub.add_subscribed_line_item
+      @sub.add_subscribed_line_items
       @sub.select_shipping
       @sub.add_payment.should be_true
 
@@ -143,7 +136,7 @@ describe Spree::Subscription do
 
     it "should have a payment" do
       @sub.create_reorder
-      @sub.add_subscribed_line_item
+      @sub.add_subscribed_line_items
       @sub.select_shipping
       @sub.add_payment.should be_true
 
