@@ -4,15 +4,19 @@ module Spree::SubscriptionsHelper
   end
 
   def subscription_price_difference_for(product:)
-    if product.variant
-      Spree::Money.new product.variant.price - product.variant.subscribed_price
-    else
-      Spree::Money.new product.master.price - product.master.subscribed_price
-    end
+      Spree::Money.new product.price - product.subscribed_price
+  end
+
+  def subscription_price_difference_for_variant(variant:)
+      Spree::Money.new variant.price - variant.subscribed_price
   end
 
   def subscription_price_difference_for_line_item(line_item)
-      difference = subscription_price_difference_for product: line_item
+    if line_item.variant
+      difference = subscription_price_difference_for_variant variant: line_item.variant
+    else
+      difference = subscription_price_difference_for product: line_item.product
+    end
     Spree::Money.new(difference.money.to_f * line_item.quantity)
   end
 end
