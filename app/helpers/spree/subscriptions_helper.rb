@@ -3,12 +3,12 @@ module Spree::SubscriptionsHelper
     Spree::Money.new(subscription.line_items.map(&:amount).sum).to_html
   end
 
-  def subscription_price_difference_for(variant:)
-    Spree::Money.new variant.price - variant.subscribed_price
+  def subscription_price_difference_for(product:)
+    Spree::Money.new product.variant.price - product.variant.subscribed_price
   end
 
   def subscription_price_difference_for_line_item(line_item)
-    difference = subscription_price_difference_for variant: line_item.variant
+    difference = subscription_price_difference_for product: line_item
     Spree::Money.new(difference.money.to_f * line_item.quantity)
   end
 end
