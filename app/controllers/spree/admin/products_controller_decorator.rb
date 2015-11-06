@@ -1,4 +1,4 @@
-if defined? Spree::Admin::ProductsController
+if defined? Spree::Admin::OrdersController
   Spree::Admin::ProductsController.class_eval do
     before_filter :check_subscription_intervals, :only => [:update]
 
