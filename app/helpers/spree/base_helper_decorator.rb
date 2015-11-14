@@ -10,7 +10,7 @@ Spree::BaseHelper.class_eval do
       price = product_or_variant.subscribed_price
       return number_to_currency(price, precision: (price.round == price ? 0 : 2))
     else
-      display_price
+      display_price(product_or_variant)
     end  
   end
 end
