@@ -53,6 +53,7 @@ class Spree::Subscription < Spree::Base
 
     result = create_reorder and
         select_shipping and
+        apply_promotions and
         add_payment and
         confirm_reorder and
         complete_reorder and
@@ -87,7 +88,8 @@ class Spree::Subscription < Spree::Base
   end
 
   def add_subscribed_line_item(line_item_master)
-    if line_item_master.parts.present?
+    #TODO this needs to be refactored to remove the need for spree-subscribe and spree-product-assembly to know about each other.
+    if line_item_master.try(:parts)
       variant = Spree::Variant.find(line_item_master.variant_id)
       options = { 'selected_variants' => line_item_master.part_line_items.all.map{|pli| { pli.variant.product.master.id.to_s => pli.variant_id } }.reduce(:merge) }
       puts options
@@ -135,6 +137,14 @@ class Spree::Subscription < Spree::Base
     self.reorder_on ||= Date.today
     self.reorder_on += self.time
     save
+  end
+  
+  def apply_promotions
+    puts " -> applying promotions..."
+    self.order.promotions.each do |promotion| 
+      self.new_order.coupon_code = promotion.code
+      @handler = Spree::PromotionHandler::Coupon.new(self.new_order).apply
+    end
   end
 
   private

@@ -15,4 +15,13 @@ FactoryGirl.define do
     line_items { [create(:line_item_with_completed_order)] }
     reorder_on Date.today
   end
+  
+  factory :subscription_for_reorder_with_promotion, :parent => :subscription do
+    # DD: needs a completed order
+    times 3
+    time_unit 3  # DD: 3 = months
+    association :order, factory: :order_ready_to_ship_for_subscriptions_with_promotion
+    line_items { [create(:line_item_with_completed_order)] }
+    reorder_on Date.today
+  end
 end

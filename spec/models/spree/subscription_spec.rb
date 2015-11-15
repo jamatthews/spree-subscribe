@@ -151,5 +151,26 @@ describe Spree::Subscription do
       order.state.should eq("complete")
       order.completed?.should be
     end
+    
+    context "with a promotion" do
+      before(:each) do
+        @sub = create(:subscription_for_reorder_with_promotion)
+        @sub.order.reload
+        # DD: calling start will set date into future
+        @sub.start
+        @sub.update_attribute(:reorder_on,Date.today)
+      end
+      
+      it "should have a promotion applied" do
+        @sub.create_reorder
+        @sub.add_subscribed_line_items
+        @sub.select_shipping
+        @sub.apply_promotions.should be_true
+        
+        order = @sub.reorders.first
+        order.promotions.count.should be(1)
+        expect(order.adjustment_total).to eq(-10)
+      end
+    end
   end
 end
