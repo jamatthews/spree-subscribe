@@ -1,5 +1,5 @@
 require 'spec_helper'
 
-describe Spree::Admin::SubscriptionIntervalsController do
+describe Spree::Admin::SubscriptionIntervalsController,  type: :controller do
 
 end

@@ -147,6 +147,19 @@ class Spree::Subscription < Spree::Base
     end
   end
 
+  def subscription_interval
+    Spree::SubscriptionInterval.find_by(times: self.times, time_unit: self.time_unit)
+  end
+  
+  def subscription_interval=(interval)
+    self.times = interval.times
+    self.time_unit = interval.time_unit
+  end
+  
+  def available_subscription_intervals
+    line_items.map{|li| li.product.subscription_intervals.to_a }.reduce(:&) || []
+  end
+
   private
 
   # DD: if resuming an old subscription

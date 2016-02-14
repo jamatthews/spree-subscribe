@@ -6,9 +6,13 @@ Spree::Core::Engine.routes.draw do
         get :search
       end
     end
-    resources :subscriptions, :except => [:new,:create]
+    resources :subscriptions, :except => [:new,:create] do
+      resources :line_items, :only => [:update,:destroy], :controller => 'subscription_line_items'
+    end
   end
       
-  resources :subscriptions, :only => [:destroy]
+  resources :subscriptions do
+    resources :line_items, :only => [:update,:destroy], :controller => 'subscription_line_items'
+  end
 
 end

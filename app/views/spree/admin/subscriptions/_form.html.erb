@@ -1,56 +1,44 @@
-<table class="index responsive">
-  <thead>
-    <th><%= t(:product, scope: :subscribe) %></th>
-    <th><%= t(:quantity, sope: :spree) %> </th>
-    <th><%= t(:price, scope: :subscribe) %></th>
-  </thead>
-  <tbody>
-    <% @subscription.line_items.each do |line_item| %>
-      <tr>
-        <td>
-          <%= line_item.variant.name %>
-          <% unless line_item.variant.options_text.blank? %>
-            - <%= line_item.variant.options_text %>
-          <% end %>
-        </td>
-        <td><%= line_item.quantity %></td>
-        <td><%= line_item.display_amount.to_html %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-
-
-<div data-hook="admin_inside_subscriptions_form" class="field">
-
-<%= form_for @subscription, :url => admin_subscription_url(@subscription), :method => :put do |f| %>
-
-  <%= f.field_container :reorder_on do %>
-    <%= f.label :reorder_on, t(:reorder_on, :scope => :subscribe) %> <span class="required">*</span><br />
-    <%= error_message_on :subscription, :reorder_on, :class => 'fullwidth title' %>
-    <% #= text_field :subscription, :reorder_on %>
-    <%= f.text_field :reorder_on, :value => datepicker_field_value(@subscription.reorder_on), :class => 'datepicker' %>
-  <% end %>
-
-  <%= f.field_container :state do %>
-    <%= f.label :state, t(:state, :scope => :subscribe) %> <span class="required">*</span><br />
-    <%= error_message_on :subscription, :state, :class => 'fullwidth title' %>
-    <%= select_tag "subscription[state]", options_for_select( Spree::Subscription.reorder_states, @subscription.state ) %>
-  <% end %>
-
-  <%= f.field_container :time do %>
-    <label><%= t(:time, :scope => :intervals) %> <span class="required">*</span></label><br />
-
-    <%= error_message_on :subscription, :times, :class => 'fullwidth title' %>
-    <%= number_field :subscription, :times %>
-
-    <%= error_message_on :subscription, :time_unit, :class => 'fullwidth title' %>
-    <%= select_tag "subscription[time_unit]", options_for_select( Spree::Subscription::UNITS.invert.to_a, @subscription.time_unit ) %>
-  <% end %>
-
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
-
-<% end %>
-
-</div>
+  	<div class="panel panel-default">
+		<div class="panel-heading">
+		    <table class="subscription-summary table">
+		      <thead>
+		        <tr>
+		          <th class="subscription-reorder-date">Due</th>
+		          <th class="subscription-price">Price</th>
+		          <th class="subscription-interval">Delivered Every</th>
+		          <th class="subscription-status">Status</th>
+		          <th class="subscription-actions">&nbsp;</th>
+		        </tr>
+		      </thead>
+		   		<tbody>
+		          <tr class="<%= cycle('even', 'odd') %>">
+		            <td class="subscription-reorder-date">
+		  			<%= form_for [:admin, @subscription], :html => {:class => 'form-inline'} do |f| %>
+		              <% if @subscription.active? %>	
+		                	<%= f.date_field :reorder_on %>	
+		              <% else %>
+		                -
+		              <% end %>
+		            </td>  
+		            <td class="subscription-price"><%= subscription_price(@subscription) %></td>
+		            <td class="subscription-interval"><%= f.select :interval, @subscription.available_subscription_intervals.collect{|i| [i.name,i.id] }, :selected => @subscription.subscription_interval.id %></td>
+		            <td class="subscription-status"><%= @subscription.state.titleize %></td>
+		            <td class="subscription-actions">
+		  			<div class="form-group">
+		              <% if @subscription.active? %>
+		  			<%= f.submit 'Update Subscription', :class => 'btn btn-sm btn-default form-inline' %>
+		                <%= link_to t(:suspend_subscription, :scope => :subscribe), admin_subscription_path(@subscription), :method => :delete, :class => 'btn btn-sm btn-warning', :data => { :confirm => t(:are_you_sure_suspend, :scope => :subscribe) } %>
+		              <% elsif @subscription.inactive? %>
+		                <%= link_to t(:resume_subscription, :scope => :subscribe), admin_subscription_path(@subscription), :method => :delete, :class => 'btn btn-sm btn-success' %>
+		              <% end %>
+		  		<% end %>	
+		  		</div>
+		            </td>
+		          </tr>
+		        </tbody>
+		      </table>
+     	 </div>
+		 <div class="panel panel-body">
+               <%= render :partial => 'line_items', :locals => { :sub => @subscription } %>
+		 </div>
+ 	</div>

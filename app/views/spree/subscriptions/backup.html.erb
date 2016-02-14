@@ -1,11 +1,10 @@
-<!-- insert_after "[data-hook='account_my_orders'], #account_my_orders[data-hook]" -->
 <div class="subscription-wrapper">
   <h3><%= t(:users_show_title, :scope => :subscribe) %></h3>
   <% if spree_current_user.subscriptions.any? %>
-    <table class="subscription-summary">
+    <table class="subscription-summary table">
       <thead>
         <tr>
-          <th class="subscription-product"><%= t(:product, :scope => :subscribe) %></th>
+          <th class="subscription-product">Items</th>
           <th class="subscription-price"><%= t(:price, :scope => :subscribe) %></th>
           <th class="subscription-interval"><%= t(:interval, :scope => :subscribe) %></th>
           <th class="subscription-reorder-date"><%= t(:reorder_on, :scope => :subscribe) %></th>
@@ -17,34 +16,32 @@
       <% spree_current_user.subscriptions.each do |sub| %>
         <tr class="<%= cycle('even', 'odd') %>">
           <td class="subscription-product">
-            <% sub.line_items.each do |line_item| %>
-              <span class="product-name"><%= line_item.variant.name %></span>
-              <% unless line_item.variant.options_text.blank? %>
-                - <%= line_item.variant.options_text %>
-              <% end %>
-              x <%= line_item.quantity %>
-              <br/>
-            <% end %>
+             <%= render :partial => 'line_items', :locals => { :sub => sub } %>
           </td>
           <td class="subscription-price"><%= subscription_price(sub) %></td>
           <td class="subscription-interval"><%= sub.time_title %></td>
           <td class="subscription-reorder-date">
-            <% if sub.active? %>
-              <%= l sub.reorder_on.to_date %>
+			<%= form_for sub, :html => {:class => 'form-inline'} do |f| %>
+            <% if sub.active? %>	
+              	<%= f.date_field :reorder_on %>	
             <% else %>
               -
             <% end %>
           </td>
           <td class="subscription-status"><%= sub.state.titleize %></td>
           <td class="subscription-actions">
+			<div class="form-group">
             <% if sub.active? %>
-              <%= link_to t(:suspend_subscription, :scope => :subscribe), subscription_path(sub), :method => :delete, :confirm => t(:are_you_sure_suspend, :scope => :subscribe) %>
+			<%= f.submit 'Update Subscription', :class => 'btn btn-sm btn-default form-inline' %>
+              <%= link_to t(:suspend_subscription, :scope => :subscribe), subscription_path(sub), :method => :delete, :class => 'btn btn-sm btn-warning', :data => { :confirm => t(:are_you_sure_suspend, :scope => :subscribe) } %>
             <% elsif sub.inactive? %>
-              <%= link_to t(:resume_subscription, :scope => :subscribe), subscription_path(sub), :method => :delete %>
+              <%= link_to t(:resume_subscription, :scope => :subscribe), subscription_path(sub), :method => :delete, :class => 'btn btn-sm btn-success' %>
             <% end %>
+		<% end %>	
+		</div>
           </td>
         </tr>
-      <% end %>
+		<% end %>
       </tbody>
     </table>
   <% else %>
