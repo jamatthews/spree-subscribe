@@ -1,3 +1,5 @@
+
+
 <table class="table">
 	<thead>
 		<tr>
@@ -12,7 +14,16 @@
 			<tr>
 				<%= form_for([sub, line_item], :html => {:class => 'form-inline'}) do |f|%>
 					<td><%= line_item.variant.name %><% ' - ' + line_item.variant.options_text unless line_item.variant.options_text.blank? %></td>
-					<td><%= f.select :variant, line_item.product.variants_and_option_values(current_currency).map{|v| [variant_options(v), v.id] }, :selected => line_item.variant_id %></td>
+					<%
+					if line_item.part_line_items.present?
+						variants = line_item.product.assemblies_parts.first.part.product.variants.map{|v| [variant_options(v), v.id] }
+						selected = line_item.part_line_items.first.variant.id
+					else
+						variants = line_item.product.variants_and_option_values(current_currency).map{|v| [variant_options(v), v.id] }
+						selected = line_item.variant_id
+					end
+					 %>
+					<td><%= f.select :variant_id, variants, :selected => selected if variants.present? %></td>
 					<td><%= f.text_field :quantity %></td>
 					<td><%= line_item.single_money.to_html %></td>
 					<td><%= f.submit 'Update Item', :class => 'btn btn-sm btn-default'%><%= link_to('Remove Item', subscription_line_item_path(sub,line_item), :method => :delete, :confirm => 'Are you sure you want to remove this item from your subscription?', :class => 'btn btn-sm btn-warning') %>

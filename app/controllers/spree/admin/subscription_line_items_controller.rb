@@ -13,10 +13,12 @@ if defined? Spree::Admin::ProductsController
     def update
       @subscription = Spree::Subscription.where(:id => params[:subscription_id]).first
       original_line_item = @subscription.line_items.select{|li| li.id = params[:id]}.first
-      if original_line_item.try(:parts)
+      if original_line_item.try(:parts) && original_line_item.part_line_items.present?
         new_line_item = Spree::LineItem.new(original_line_item.attributes.merge({ :id => nil, :updated_at => nil, :created_at => nil , :quantity => params[:line_item][:quantity]})) 
       else
-        new_line_item = Spree::LineItem.new(original_line_item.attributes.merge({ :id => nil, :updated_at => nil, :created_at => nil}).merge(params[:line_item][:variant]))
+        new_line_item_attributes = original_line_item.attributes.merge({ :id => nil, :updated_at => nil, :created_at => nil}, :quantity => params[:line_item][:quantity])
+        new_line_item_attributes[:variant_id] = params[:line_item][:variant_id] if params[:line_item][:variant_id].present?
+        new_line_item = Spree::LineItem.new(new_line_item_attributes)
         new_line_item
       end
       new_line_item.order = nil
@@ -27,8 +29,8 @@ if defined? Spree::Admin::ProductsController
         Spree::LineItem.skip_callback(:save, :after, :update_inventory)
         Spree::LineItem.skip_callback(:save, :after, :update_adjustments)
         new_line_item.save(validate: false)
-        if original_line_item.try(:parts)
-          populate_part_line_items(new_line_item, new_line_item.variant.product.assemblies_parts,  new_line_item.variant.product.assemblies_parts.first.id => params[:line_item][:variant])
+        if original_line_item.try(:parts) && original_line_item.part_line_items.present?
+          populate_part_line_items(new_line_item, new_line_item.variant.product.assemblies_parts,  new_line_item.variant.product.assemblies_parts.first.id => params[:line_item][:variant_id])
           new_line_item.save(validate: false)
         end
       ensure
