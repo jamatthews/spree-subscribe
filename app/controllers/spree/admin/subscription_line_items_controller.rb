@@ -16,7 +16,8 @@ if defined? Spree::Admin::ProductsController
       if original_line_item.try(:parts)
         new_line_item = Spree::LineItem.new(original_line_item.attributes.merge({ :id => nil, :updated_at => nil, :created_at => nil , :quantity => params[:line_item][:quantity]})) 
       else
-        new_line_item = Spree::LineItem.new(original_line_item.attributes.merge({ :id => nil, :updated_at => nil, :created_at => nil , :quantity => params[:line_item][:quantity], :variant_id => params[:line_item][:variant]}))
+        new_line_item = Spree::LineItem.new(original_line_item.attributes.merge({ :id => nil, :updated_at => nil, :created_at => nil}).merge(params[:line_item][:variant]))
+        new_line_item
       end
       new_line_item.order = nil
       new_line_item.order_id = nil
