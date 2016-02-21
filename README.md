@@ -1,4 +1,4 @@
-[![Build Status](https://codeship.com/projects/7991fbb0-ba4d-0133-2784-1672e7130937status?branch=master)](https://codeship.com/projects/7991fbb0-ba4d-0133-2784-1672e7130937/status?branch=master)
+[ ![Build Status](https://codeship.com/projects/e16b2de0-ba55-0133-31da-665d9895e075/status?branch=master)](https://codeship.com/projects/135667)
 [![Code Climate](https://codeclimate.com/github/jamatthews/spree-subscribe/badges/gpa.svg)](https://codeclimate.com/github/jamatthews/spree-subscribe)
 
 **This extension is ready for beta testing.**
