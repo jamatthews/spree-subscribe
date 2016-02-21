@@ -91,8 +91,7 @@ class Spree::Subscription < Spree::Base
     #TODO this needs to be refactored to remove the need for spree-subscribe and spree-product-assembly to know about each other.
     if line_item_master.try(:parts)
       variant = Spree::Variant.find(line_item_master.variant_id)
-      options = { 'selected_variants' => line_item_master.part_line_items.all.map{|pli| { pli.variant.product.master.id.to_s => pli.variant_id } }.reduce(:merge) }
-      puts options
+      options = { 'selected_variants' => line_item_master.part_line_items.all.map{|pli| { variant.product.assemblies_parts.first.id.to_s => pli.variant_id } }.reduce(:merge) }
       line_item = self.new_order.contents.add(variant, line_item_master.quantity, options)
     else
       variant = Spree::Variant.find(line_item_master.variant_id)
@@ -201,4 +200,5 @@ class Spree::Subscription < Spree::Base
     puts " !! Order progression failed. Status still '#{new_order_state}'" unless success
     success
   end
+
 end

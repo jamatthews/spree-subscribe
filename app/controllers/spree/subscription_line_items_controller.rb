@@ -12,7 +12,7 @@ class Spree::SubscriptionLineItemsController < Spree::StoreController
   def update
     @subscription = Spree::Subscription.where(:id => params[:subscription_id], :user_id => spree_current_user.id).first
     original_line_item = @subscription.line_items.select{|li| li.id = params[:id]}.first
-    new_line_item = Spree::LineItem.new(original_line_item.attributes.merge({ :id => nil , :quantity => params[:line_item][:quantity], :variant_id => params[:line_item][:variant]})) 
+    new_line_item = Spree::LineItem.new(original_line_item.attributes.merge({ :id => nil, :updated_at => nil, :created_at => nil , :quantity => params[:line_item][:quantity], :variant_id => params[:line_item][:variant]})) 
     new_line_item.order = nil
     new_line_item.order_id = nil
     

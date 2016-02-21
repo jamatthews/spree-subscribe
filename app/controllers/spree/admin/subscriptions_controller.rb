@@ -14,7 +14,14 @@ if defined? Spree::Admin::ProductsController
     def destroy
       @subscription.active? ? @subscription.suspend : @subscription.resume
 
-      redirect_to account_url
+      redirect_to url_for([:edit, :admin, @subscription])
+    end
+    
+    def update
+      @subscription.reorder_on = params[:subscription][:reorder_on]
+      @subscription.subscription_interval = Spree::SubscriptionInterval.find(params[:subscription][:interval])
+      @subscription.save!
+      redirect_to url_for([:edit, :admin, @subscription])
     end
 
     private
@@ -23,6 +30,5 @@ if defined? Spree::Admin::ProductsController
       @subscription = Spree::Subscription.find_by_id! params[:id]
       authorize! action, @subscription
     end
-
   end
 end
