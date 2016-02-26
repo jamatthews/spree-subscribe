@@ -7,14 +7,14 @@ describe Spree::SubscriptionInterval do
   end
 
   it "has a 3 month time period" do
-    @interval.time.should eq(3.months)
+    expect(@interval.time).to eq(3.months)
   end
 
   it "have a symbol :month for time_unit_symbol" do
-    @interval.time_unit_symbol.should eq(:month)
+    expect(@interval.time_unit_symbol).to eq(:month)
   end
 
   it "have a title of '3 Months' for time_title" do
-    @interval.time_title.should eq("3 Months")
+    expect(@interval.time_title).to eq("3 Months")
   end
 end

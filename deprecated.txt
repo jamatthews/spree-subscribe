@@ -1,0 +1,47 @@
+--------------------------------------------------------------------------------
+rspec-rails 3 will no longer automatically infer an example group's spec type
+from the file location. You can explicitly opt-in to this feature using this
+snippet:
+
+RSpec.configure do |config|
+  config.infer_spec_type_from_file_location!
+end
+
+If you wish to manually label spec types via metadata you can safely ignore
+this warning and continue upgrading to RSpec 3 without addressing it.
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+RSpec::Core::ExampleGroup#example is deprecated and will be removed
+in RSpec 3. There are a few options for what you can use instead:
+
+  - rspec-core's DSL methods (`it`, `before`, `after`, `let`, `subject`, etc)
+    now yield the example as a block argument, and that is the recommended
+    way to access the current example from those contexts.
+  - The current example is now exposed via `RSpec.current_example`,
+    which is accessible from any context.
+  - If you can't update the code at this call site (e.g. because it is in
+    an extension gem), you can use this snippet to continue making this
+    method available in RSpec 2.99 and RSpec 3:
+
+      RSpec.configure do |c|
+        c.expose_current_running_example_as :example
+      end
+
+(Called from /Users/jake/subsupps/spree-subscribe/spec/spec_helper.rb:80:in `block (2 levels) in <top (required)>')
+--------------------------------------------------------------------------------
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:71:in `block (3 levels) in <top (required)>'.
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:76:in `block (3 levels) in <top (required)>'.
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:81:in `block (3 levels) in <top (required)>'.
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:88:in `block (3 levels) in <top (required)>'.
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:96:in `block (3 levels) in <top (required)>'.
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:104:in `block (3 levels) in <top (required)>'.
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:117:in `block (3 levels) in <top (required)>'.
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:130:in `block (3 levels) in <top (required)>'.
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:141:in `block (3 levels) in <top (required)>'.
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:148:in `block (3 levels) in <top (required)>'.
+`be_true` is deprecated. Use `be_truthy` (for Ruby's conditional semantics) or `be true` (for exact `== true` equality) instead. Called from /Users/jake/subsupps/spree-subscribe/spec/models/spree/subscription_spec.rb:168:in `block (4 levels) in <top (required)>'.
+
+If you need more of the backtrace for any of these deprecations to
+identify where to make the necessary changes, you can configure
+`config.raise_errors_for_deprecations!`, and it will turn the
+deprecation warnings into errors, giving you the full backtrace.

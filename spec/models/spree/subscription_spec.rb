@@ -14,46 +14,46 @@ describe Spree::Subscription do
     end
 
     it "should have no reorder date" do
-      @sub.line_items.first.should be
-      @sub.state.should eq("cart")
-      @sub.reorder_on.should be_nil
+      expect(@sub.line_items.first).to be
+      expect(@sub.state).to eq("cart")
+      expect(@sub.reorder_on).to be_nil
     end
 
     it "should have reorder date that is three months (i.e. subscription interval) from today on activation" do
       @sub.start
-      @sub.reorder_on.should eq(Date.today + 3.month)
+      expect(@sub.reorder_on).to eq(Date.today + 3.month)
     end
 
     it "should have a billing address on activation" do
-      @sub.order.bill_address.should be
-      @sub.billing_address.should be_nil
+      expect(@sub.order.bill_address).to be
+      expect(@sub.billing_address).to be_nil
       @sub.start
-      @sub.billing_address.should be
+      expect(@sub.billing_address).to be
     end
 
     it "should have a shipping address on activation" do
-      @sub.order.shipping_address.should be
-      @sub.shipping_address.should be_nil
+      expect(@sub.order.shipping_address).to be
+      expect(@sub.shipping_address).to be_nil
       @sub.start
-      @sub.shipping_address.should be
+      expect(@sub.shipping_address).to be
     end
 
     it "should have a payment method on activation" do
-      @sub.payment_method.should be_nil
+      expect(@sub.payment_method).to be_nil
       @sub.start
-      @sub.payment_method.should be
+      expect(@sub.payment_method).to be
     end
 
     it "should have a payment source on activation" do
-      @sub.source.should be_nil
+      expect(@sub.source).to be_nil
       @sub.start
-      @sub.source.should be
+      expect(@sub.source).to be
     end
 
     it "should have a user on activation" do
-      @sub.user.should be_nil
+      expect(@sub.user).to be_nil
       @sub.start
-      @sub.user.should be
+      expect(@sub.user).to be
     end
   end
 
@@ -67,44 +67,44 @@ describe Spree::Subscription do
     end
 
     it "should have reorder_on reset" do
-      @sub.reorder_on.should eq(Date.today)
-      @sub.reorder.should be_true
-      @sub.reorder_on.should eq(Date.today + 3.month)
+      expect(@sub.reorder_on).to eq(Date.today)
+      expect(@sub.reorder).to be_truthy
+      expect(@sub.reorder_on).to eq(Date.today + 3.month)
     end
 
     it "should have a valid order" do
-      @sub.reorder.should be_true
-      @sub.reorders.count.should eq(1)
+      expect(@sub.reorder).to be_truthy
+      expect(@sub.reorders.count).to eq(1)
     end
 
     it "should have a valid order with a billing address" do
-      @sub.create_reorder.should be_true
+      expect(@sub.create_reorder).to be_truthy
       order = @sub.reorders.first
-      order.bill_address.should == @sub.billing_address  # DD: uses == operator override in Spree::Address
-      order.bill_address.id.should_not eq @sub.billing_address.id # DD: not the same database record
+      expect(order.bill_address).to eq(@sub.billing_address)  # DD: uses == operator override in Spree::Address
+      expect(order.bill_address.id).not_to eq @sub.billing_address.id # DD: not the same database record
     end
 
     it "should have a valid order with a shipping address" do
-      @sub.create_reorder.should be_true
+      expect(@sub.create_reorder).to be_truthy
       order = @sub.reorders.first
-      order.ship_address.should == @sub.shipping_address  # DD: uses == operator override in Spree::Address
-      order.ship_address.id.should_not eq @sub.shipping_address.id # DD: not the same database record
+      expect(order.ship_address).to eq(@sub.shipping_address)  # DD: uses == operator override in Spree::Address
+      expect(order.ship_address.id).not_to eq @sub.shipping_address.id # DD: not the same database record
     end
 
     it "should have a valid line item" do
       @sub.create_reorder
-      @sub.add_subscribed_line_items.should be_true
+      expect(@sub.add_subscribed_line_items).to be_truthy
       order = @sub.reorders.first
-      order.line_items.count.should eq(1)
+      expect(order.line_items.count).to eq(1)
     end
 
     it "should have a valid order with a shipping method" do
       @sub.create_reorder
       @sub.add_subscribed_line_items
-      @sub.select_shipping.should be_true
+      expect(@sub.select_shipping).to be_truthy
 
       order = @sub.reorders.first
-      order.shipments.count.should eq(1)
+      expect(order.shipments.count).to eq(1)
 
       s = order.shipments.first
       expect(s.shipping_method.code).to eq @sub.shipping_method.code
@@ -114,10 +114,10 @@ describe Spree::Subscription do
       @sub.create_reorder
       @sub.add_subscribed_line_items
       @sub.select_shipping
-      @sub.add_payment.should be_true
+      expect(@sub.add_payment).to be_truthy
 
       order = @sub.reorders.first
-      order.payments.count.should eq(1)
+      expect(order.payments.count).to eq(1)
 
       payment = order.payments.first
       expect(payment.payment_method).to eq @sub.payment_method  # DD: should be same database record
@@ -127,10 +127,10 @@ describe Spree::Subscription do
       @sub.create_reorder
       @sub.add_subscribed_line_items
       @sub.select_shipping
-      @sub.add_payment.should be_true
+      expect(@sub.add_payment).to be_truthy
 
       order = @sub.reorders.first
-      order.payments.count.should be(1)
+      expect(order.payments.count).to be(1)
       expect(order.payments.first.source).to eq @sub.source  # DD: should be same database record
     end
 
@@ -138,18 +138,18 @@ describe Spree::Subscription do
       @sub.create_reorder
       @sub.add_subscribed_line_items
       @sub.select_shipping
-      @sub.add_payment.should be_true
+      expect(@sub.add_payment).to be_truthy
 
       order = @sub.reorders.first
-      order.payments.should be
+      expect(order.payments).to be
     end
 
     it "should have a completed order" do
-      @sub.reorder.should be_true
+      expect(@sub.reorder).to be_truthy
 
       order = @sub.reorders.first
-      order.state.should eq("complete")
-      order.completed?.should be
+      expect(order.state).to eq("complete")
+      expect(order.completed?).to be
     end
     
     context "with a promotion" do
@@ -165,10 +165,10 @@ describe Spree::Subscription do
         @sub.create_reorder
         @sub.add_subscribed_line_items
         @sub.select_shipping
-        @sub.apply_promotions.should be_true
+        expect(@sub.apply_promotions).to be_truthy
         
         order = @sub.reorders.first
-        order.promotions.count.should be(1)
+        expect(order.promotions.count).to be(1)
         expect(order.adjustment_total).to eq(-10)
       end
     end
