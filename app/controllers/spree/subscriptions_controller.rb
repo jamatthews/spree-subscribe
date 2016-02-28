@@ -2,6 +2,7 @@ class Spree::SubscriptionsController < Spree::StoreController
   rescue_from ActiveRecord::RecordNotFound, :with => :render_404
   helper "spree/subscriptions"
   before_action :load_subscription, only: [:update, :destroy]
+  before_filter :authenticate_spree_user!
   
   
   def destroy
