@@ -1,0 +1,11 @@
+<table>
+	<% @sub.line_items.each do |item| %>
+	  <tr>
+	    <td>
+	      <%= raw(item.variant.product.name) %>
+	      <%= raw(item.variant.options_text) -%>
+	    </td>
+	    <td>(<%=item.quantity%>) <%= Spree.t('at_symbol') %> <%= item.single_money %> = <%= item.display_amount %></td>
+	  </tr>
+	<% end %>
+</table>
