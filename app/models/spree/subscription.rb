@@ -49,7 +49,7 @@ class Spree::Subscription < Spree::Base
   
   def self.send_reminders!
     self.due_within(7.days).each{ |sub|
-      Spree::SubscriptionMailer.reminder_email(sub).deliver_now
+      Spree::SubscriptionMailer.reminder_email(sub).deliver_now unless sub.reminded_at > ( sub.reorder_on - 7.days )
     }
   end
 
