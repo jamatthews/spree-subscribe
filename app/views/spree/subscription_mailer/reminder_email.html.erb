@@ -1,11 +1,39 @@
 <table>
-	<% @sub.line_items.each do |item| %>
-	  <tr>
-	    <td>
-	      <%= raw(item.variant.product.name) %>
-	      <%= raw(item.variant.options_text) -%>
-	    </td>
-	    <td>(<%=item.quantity%>) <%= Spree.t('at_symbol') %> <%= item.single_money %> = <%= item.display_amount %></td>
-	  </tr>
-	<% end %>
+  <tr>
+    <td>
+      <p class="lede">
+        Dear Customer,<br>
+        Your next order is due soon. If you want to change your flavour or push your order back, we've made it super
+        easy to make changes to your order via the button below.<br>
+        Thanks
+      </p>
+    <td class="expander"></td>
+  </tr>
+</table>
+<table style="width: 100%">
+  <thead>
+  <td>Product</td>
+  <td>Quantity</td>
+  <td>Price</td>
+  </thead>
+  <tbody>
+  <% @sub.line_items.each do |item| %>
+      <tr>
+        <td>
+          <%= raw(item.variant.product.name) %>
+          <%= raw(item.variant.options_text) -%>
+        </td>
+        <td><%=item.quantity%></td>
+        <td><%= item.display_amount %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+</td>
+<table class="button">
+  <tr>
+    <td>
+      <a href="<%= subscriptions_url%>">Change My Order</a>
+    </td>
+  </tr>
 </table>

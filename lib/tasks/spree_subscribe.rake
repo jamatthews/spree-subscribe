@@ -10,7 +10,7 @@ namespace :spree_subscribe do
   namespace :reminders do
     desc 'Send all subscriptions that are due soon a reminder email'
     task :send => :environment do
-      Spree::Subscriptions.send_reminders!
+      Spree::Subscription.send_reminders!
     end
   end
 
