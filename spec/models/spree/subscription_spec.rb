@@ -172,5 +172,23 @@ describe Spree::Subscription do
         expect(order.adjustment_total).to eq(-10)
       end
     end
+    
+    it 'should appear in due_within' do
+      expect(Spree::Subscription.due_within(7.days).count).to eq(1)
+    end
+  end
+  
+  context "that has just been reordered" do
+    before(:each) do
+      @sub = create(:subscription_for_reorder)
+      @sub.order.reload
+      # DD: calling start will set date into future
+      @sub.start
+      @sub.update_attribute(:reorder_on, Date.today + 4.weeks)
+    end
+    
+    it 'should appear in due_within' do
+      expect(Spree::Subscription.due_within(7.days).count).to eq(0)
+    end
   end
 end
