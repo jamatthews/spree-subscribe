@@ -28,6 +28,6 @@ class Spree::SubscriptionsController < Spree::StoreController
   end
 
   def subscription_params
-    params.permit([:reorder_on, :interval])
+    params.permit(subscription: [:reorder_on, :interval])
   end
 end
