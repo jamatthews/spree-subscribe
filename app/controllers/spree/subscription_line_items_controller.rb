@@ -9,6 +9,69 @@ class Spree::SubscriptionLineItemsController < Spree::StoreController
     redirect_to subscriptions_path
   end
 
+  # Adds a new item to the order (creating a new order if none already exists)
+  def create
+    @subscription = Spree::Subscription.where(:id => params[:subscription_id], :user_id => spree_current_user.id).first
+    order    = current_order(create_order_if_necessary: true)
+    variant  = Spree::Variant.find(params[:variant_id])
+    quantity = params[:quantity].to_i
+    options  = params[:options] || {}
+
+    order.contents.add(variant, quantity, options)
+
+    Rails.logger.debug(puts order.contents.inspect)
+
+    if params[:product_id]
+      add_subscription params[:product_id], params[:subscriptions][:interval_id]
+    end
+
+    if params[:variant_id]
+      add_subscription params[:variant_id], params[:subscriptions][:interval_id]
+    end
+
+    params[:products].each do |product_id,variant_id|
+      add_subscription variant_id, params[:subscriptions][:interval_id]
+    end if params[:products]
+
+    params[:variants].each do |variant_id, quantity|
+      add_subscription variant_id, params[:subscriptions][:interval_id]
+    end if params[:variants]
+
+    # need to update the order so its total is accurate
+    current_order.updater.update
+
+    original_line_item = current_order.line_items.where(:variant_id => variant.id).first
+
+    if original_line_item.try(:parts) && original_line_item.part_line_items.present?
+      new_line_item = Spree::LineItem.new(original_line_item.attributes.merge({:id => nil, :updated_at => nil, :created_at => nil , :quantity => quantity, :subscription_id => @subscription.id}))
+    else
+      new_line_item_attributes = original_line_item.attributes.merge({ :id => nil, :updated_at => nil, :created_at => nil, :quantity => quantity, :subscription_id => @subscription.id})
+      new_line_item_attributes[:variant_id] = variant.id if variant.id.present?
+      new_line_item = Spree::LineItem.new(new_line_item_attributes)
+      new_line_item
+    end
+    new_line_item.order = nil
+    new_line_item.order_id = nil
+
+    begin
+      Spree::LineItem.skip_callback(:create, :after, :update_tax_charge)
+      Spree::LineItem.skip_callback(:save, :after, :update_inventory)
+      Spree::LineItem.skip_callback(:save, :after, :update_adjustments)
+      new_line_item.save(validate: false)
+      if original_line_item.try(:parts) && original_line_item.part_line_items.present?
+        populate_part_line_items(new_line_item, new_line_item.variant.product.assemblies_parts,  new_line_item.variant.product.assemblies_parts.first.id => variant.id)
+        new_line_item.save(validate: false)
+      end
+    ensure
+      Spree::LineItem.set_callback(:create, :after, :update_tax_charge)
+      Spree::LineItem.set_callback(:save, :after, :update_inventory)
+      Spree::LineItem.set_callback(:save, :after, :update_adjustments)
+    end
+
+    order.contents.remove(variant, quantity)
+    redirect_to subscriptions_path
+  end
+
   def update
     @subscription = Spree::Subscription.where(:id => params[:subscription_id], :user_id => spree_current_user.id).first
     original_line_item = @subscription.line_items.select{|li| li.id = params[:id]}.first
@@ -41,7 +104,42 @@ class Spree::SubscriptionLineItemsController < Spree::StoreController
     original_line_item.update_column(:subscription_id, nil)
     redirect_to subscriptions_path
   end
-  
+
+  protected
+
+  # DD: TODO write test for this method
+  # returns true/false
+  def add_subscription(variant_id, interval_id)
+    line_item = current_order.line_items.where(:variant_id => variant_id).first
+    interval = Spree::SubscriptionInterval.find(interval_id)
+
+    # DD: set subscribed price
+    if line_item.variant.subscribed_price.present?
+      line_item.price = subscribed_price_for_variant line_item.variant
+    end
+
+    # orders may only have one subscription per interval
+    subscription = current_order.subscriptions.find_or_create_by \
+      times: interval.times,
+      time_unit: interval.time_unit
+
+    line_item.subscription = subscription
+
+    line_item.save
+
+    # let's be explicit about what we're returning here
+    true
+  end
+
+  def subscribed_price_for_variant(variant)
+    # pass true to check protected / private methods
+    if respond_to? :subscribed_price_for_variant_override, true
+      subscribed_price_for_variant_override variant
+    else
+      variant.subscribed_price
+    end
+  end
+
   private
   
   def populate_part_line_items(line_item, parts, selected_variants)

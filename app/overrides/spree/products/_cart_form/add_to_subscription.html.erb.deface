@@ -1,0 +1,4 @@
+<!-- insert_after '#add-to-cart-button' -->
+<%= button_tag class: 'btn btn-success', id: 'add-to-subscription-button' do %>
+    'Add To Subscription'
+<% end %>
