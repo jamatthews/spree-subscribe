@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe Spree::Subscription do
+
+  before(:all) do
+    FactoryGirl.create(:store)
+  end
+
   context "validation" do
     it "cannot make multiple subscriptions per orderXinterval"
     it "has many line items"

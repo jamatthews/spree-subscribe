@@ -1,11 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'spree', '~> 3.0'
-gem 'rails', '~> 4.2'
+gem 'rails', '~> 4.2.0'
+gem 'spree', '~> 3.1.0'
 # Provides basic authentication functionality for testing parts of your engine
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '3-0-stable'
-gem 'spree_mail_settings', github: 'jamatthews/spree_mail_settings', branch: '3-0-stable'
-
+gem 'spree_auth_devise', '~> 3.1'
+gem 'spree_mail_settings', github: 'spree-contrib/spree_mail_settings', branch: '3-1-stable'
 
 group :test do
   gem 'capybara', '~> 2.4'
