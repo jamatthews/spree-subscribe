@@ -1,11 +1,6 @@
 <!-- insert_bottom "[data-hook='cart_item_description']" -->
 <% if line_item.subscription %>
   <div class="subscription-callout">
-    Subscription: Deliver every <%= line_item.subscription.time_title %>.
-
-    <% price_difference = subscription_price_difference_for_line_item line_item %>
-	<% if price_difference.money.to_f > 0 %>
-    	<span class="price-saved">You save <%= price_difference.to_html %>!</span>
-	<% end %>
+    Delivered every <%= line_item.subscription.time_title %>
   </div>
 <% end %>
